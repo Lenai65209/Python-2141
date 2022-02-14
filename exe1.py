@@ -1,26 +1,35 @@
-# Перевод секунд в дни, часы, минуты и секунды.
-# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
-# lenai65209@rambler.ru
+import json
+
+from requests import get
 
 
-duration = int(input('Введите время в секундах '))
-days = 0
-hours = 0
-minutes = 0
-seconds = 0
-if duration // 60:
-    minutes = duration // 60
-    seconds = duration % 60
-    if minutes // 60:
-        hours = minutes // 60
-        minutes = minutes % 60
-        if hours // 24:
-            days = hours // 24
-            hours = hours % 24
-            print(days, 'dh', hours, 'hh', minutes, 'mh', seconds, 'sh')
+class MyError(Exception):
+    '''Данные не получены'''
+    pass
+
+
+def currency_rates(valute_name):
+    '''returns the currency exchange rate and the date of the exchange rate by code'''
+    try:
+        response = get('https://www.cbr-xml-daily.ru/daily_json.js')
+        response.encoding = 'utf-8'
+        json_data = json.loads(response.text)
+        if valute_name in json_data['Valute']:
+            dic_valute = json_data['Valute'][valute_name]
+            data = json_data['Date'][0:10]
+            return dic_valute['Value'], data
         else:
-            print(hours, 'hh1', minutes, 'mh1', seconds, 'sh1')
-    else:
-        print(minutes, 'mm1', seconds, 'ms1')
-else:
-    print('duration', duration)
+            return ('К сожадению', "такой валюты нет")
+    except:
+        raise MyError("Данные о валютах не получены")
+
+
+if __name__ == '__main__':
+    valute_name = input("Введите код валюты, чтобы узнать курс: ")
+    answer = currency_rates(valute_name)
+    print(f'Курс {valute_name}: {answer[0]}, {answer[1]}')
+    dollar_exchange_rate = currency_rates("USD")
+    print(f'Курс доллара: {dollar_exchange_rate[0]}, {dollar_exchange_rate[1]}')
+    euro_exchange_rate = currency_rates("EUR")
+    print(f'Курс евро: {euro_exchange_rate[0]}, {euro_exchange_rate[1]}')
+
