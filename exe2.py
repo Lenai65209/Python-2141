@@ -1,46 +1,34 @@
-# Список, состоящий из кубов нечётных чисел от 1 до 1000.
-# Суммф тех чисел из этого списка, сумма цифр которых делится нацело на 7.
-# К каждому элементу списка добавить 17
-# Заново вычислиена сумма тех чисел из этого (нового) списка, сумма цифр которых делится нацело на 7
-# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
-# lenai65209@rambler.ru
+import json
+
+from requests import get
 
 
-my_num = [num ** 3 for num in range(1, 1000) if num % 2]
-print("numbers", my_num)
-my_sam = 0
+class MyError(Exception):
+    '''Данные не получены'''
+    pass
 
 
-def my_ten(my_num_lst):
-    num_lst = []
-    result = 0
-    num_lst.append(my_num_lst % 10)
-    while my_num_lst // 10:
-        my_num_lst = my_num_lst // 10
-        num_lst.append(my_num_lst % 10)
-    for figure in num_lst:
-        result += figure
-    if result % 7 == 0:
-        return result
-    else:
-        return 0
+def currency_rates(valute_name):
+    '''returns the currency exchange rate and the date of the exchange rate by code'''
+    try:
+        response = get('https://www.cbr-xml-daily.ru/daily_json.js')
+        response.encoding = 'utf-8'
+        json_data = json.loads(response.text)
+        if valute_name in json_data['Valute']:
+            dic_valute = json_data['Valute'][valute_name]
+            data = json_data['Date'][0:10]
+            return dic_valute['Value'], data
+        else:
+            return ('К сожадению', "такой валюты нет")
+    except:
+        raise MyError("Данные о валютах не получены")
 
 
-for num in my_num:
-    if my_ten(num):
-        my_sam += num
-print('my_sam', my_sam)
-
-my_sam = 0
-for num in my_num:
-    num = num + 17
-    if my_ten(num):
-        my_sam += num  # не совсем ясно надо ли убирать 17 (my_sam += nam - 17)
-print('my_sam', my_sam)
-
-my_sam = 0
-for num in my_num:
-    num = num + 17
-    if my_ten(num):
-        my_sam += num - 17
-print('my_sam', my_sam)
+if __name__ == '__main__':
+    valute_name = input("Введите код валюты, чтобы узнать курс: ")
+    answer = currency_rates(valute_name)
+    print(f'Курс {valute_name}: {answer[0]}, {answer[1]}')
+    dollar_exchange_rate = currency_rates("USD")
+    print(f'Курс доллара: {dollar_exchange_rate[0]}, {dollar_exchange_rate[1]}')
+    euro_exchange_rate = currency_rates("EUR")
+    print(f'Курс евро: {euro_exchange_rate[0]}, {euro_exchange_rate[1]}')

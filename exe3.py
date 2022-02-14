@@ -1,18 +1,11 @@
-# Склонение процентов.
-# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
-# lenai65209@rambler.ru
+from exs_4_2 import currency_rates
 
-
-def my_like_pers(my_pers):
-    if i % 10 == 1 and i != 11:
-        print(my_pers, 'процент')
-
-    elif 2 <= i % 10 <= 4 and i != 12 and i != 13 and i != 14:
-        print(my_pers, 'процента')
-
-    else:
-        print(my_pers, 'процентов')
-
-
-for i in range(101):
-    my_like_pers(i)
+valute_name = input("Введите код валюты, чтобы узнать курс: ")
+answer = currency_rates(valute_name)
+print(f'Курс {valute_name}: {answer[0]}, {answer[1]}')
+dollar_exchange_rate = currency_rates("USD")
+print(f'Курс доллара: {dollar_exchange_rate[0]}, {dollar_exchange_rate[1]}')
+euro_exchange_rate = currency_rates("EUR")
+print(f'Курс евро: {euro_exchange_rate[0]}, {euro_exchange_rate[1]}')
+GBP_exchange_rate = currency_rates("GBP")
+print(f'Курс Британского фунта стерлингов: {GBP_exchange_rate[0]}, {GBP_exchange_rate[1]}')
