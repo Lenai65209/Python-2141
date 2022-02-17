@@ -1,0 +1,13 @@
+# Генератор нечётных чисел от 1 до n (включительно) без yield.
+# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
+# lenai65209@rambler.ru
+
+
+def odd_nums(num):
+    num_gen = (num for num in range(1, num + 1, 2))
+    print(type(num_gen))
+    print(*num_gen, sep='.')
+
+
+if __name__ == '__main__':
+    odd_nums(15)

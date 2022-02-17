@@ -1,0 +1,25 @@
+#  Вывести элементы списка, значения которых больше предыдущего.
+# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
+# lenai65209@rambler.ru
+from time import perf_counter
+
+
+def my_set_choice(function_src):
+    """output of list items larger than the previous one"""
+    unique_brands = []
+    my_tmp = function_src[0]
+    for el in range(1, len(function_src)):
+        if function_src[el] > my_tmp:
+            unique_brands.append(function_src[el])
+            my_tmp = function_src[el]
+        else:
+            my_tmp = function_src[el]
+    return unique_brands
+
+
+if __name__ == '__main__':
+    src = [300, 2, 12, 44, 1, 1, 4, 10, 7, 1, 78, 123, 55]
+    result = [12, 44, 4, 10, 78, 123]
+    start = perf_counter()
+    print(my_set_choice(src))
+    print(1, perf_counter() - start)
