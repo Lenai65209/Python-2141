@@ -1,0 +1,24 @@
+# Выводит элементы списка, значения которых больше предыдущего.
+# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
+# lenai65209@rambler.ru
+from time import perf_counter
+
+from exs_5_4_1 import my_set_choice
+
+
+def my_comprehensions_choice(function_src):
+    """output of list items larger than the previous one (Comprehensions)"""
+    unique_el_ist = []
+    unique_el_lst = [function_src[el] for el in range(1, len(function_src)) if function_src[el] > function_src[el - 1]]
+    return unique_el_lst
+
+
+if __name__ == '__main__':
+    src = [300, 2, 12, 44, 1, 1, 4, 10, 7, 1, 78, 123, 55]
+    result = [12, 44, 4, 10, 78, 123]
+    start = perf_counter()
+    print(my_comprehensions_choice(src))
+    print(1, perf_counter() - start)
+    start_1 = perf_counter()
+    print(my_set_choice(src))
+    print(2, perf_counter() - start_1)

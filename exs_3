@@ -1,0 +1,45 @@
+# Генератор, возвращающий кортежи вида (<tutor>, <klass>).
+# Количество генерируемых кортежей не больше длины списка tutors.
+# Если в списке klasses меньше элементов, чем в списке tutors,выводятся последние кортежи в виде: (<tutor>, None)
+# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
+# lenai65209@rambler.ru
+
+
+def my_zipped(function_tutors, function_klass):
+    """parallel passage of lists (length alignment <tutors>)
+
+    :param: function_tutors = [the first list,]
+    function_klass = [the second list,]
+    :yield: tuples (element of the first list, element of the second list or None)
+    """
+
+    if len(function_tutors) > len(function_klass):
+        for _ in range(1, (len(function_tutors) - len(function_klass) + 1)):
+            function_klass.append(None)
+    for t, k in zip(function_tutors, function_klass):
+        yield t, k
+
+
+if __name__ == '__main__':
+    tutors = ['Иван', 'Анастасия', 'Петр', 'Сергей', 'Дмитрий', 'Борис', 'Елена']
+    klasses = ['9А', '7В', '9Б', '9В', '8Б', '10А', '10Б', '9А']
+    klasses_1 = ['9А', '7В', '9Б', '9В', '8Б']
+    klasses_2 = ['9А', '7В', '9Б', '9В', '8Б', '10А', '10Б', '9А', '1В', '2Б', '4В', ]
+
+    zipped = my_zipped(tutors, klasses)
+    print('my_zipped(tutors, klasses)')
+    print(type(zipped))
+    print(next(zipped))
+    print(next(zipped))
+    print(next(zipped))
+    print(next(zipped))
+    print(next(zipped))
+    print(next(zipped))
+    print(next(zipped))
+    zipped = my_zipped(tutors, klasses_1)
+    print('my_zipped(tutors, klasses_1)')
+    print(type(zipped))
+    print(*zipped, sep="\n")
+    zipped = my_zipped(tutors, klasses_2)
+    print('my_zipped(tutors, klasses_2)')
+    print(*zipped, sep="\n")
