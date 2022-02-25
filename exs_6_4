@@ -1,0 +1,40 @@
+# Из файла с данными о пользователях (users.csv)
+# и файла с данными о хобби  (hobby.csv)
+#сохраyztv объединенные данные в новый файл (users_hobby.txt).
+# Хобби пишем через двоеточие и пробел после ФИО (Иванов,Иван,Иванович: скалолазание,охота)
+# Проверяем сохранённые данные.
+# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
+# lenai65209@rambler.ru
+
+import sys
+
+from exs_6_3 import csv_reader
+
+file_users_csv = "users.csv"
+file_hobby_csv = "hobby.csv"
+ls_ord_dic_users = csv_reader(file_users_csv)
+ls_ord_dic_hobby = csv_reader(file_hobby_csv)
+if len(ls_ord_dic_hobby) > len(ls_ord_dic_users):
+    sys.exit(1)
+else:
+    with open('users.csv', newline='', encoding='utf-8') as users, open('hobby.csv', newline='',
+                                                                        encoding='utf-8') as hobby, \
+            open('users_hobby.txt', "a", newline='', encoding='utf-8') as users_hobby_txt:
+        line_count = 0
+        for line_users in users:
+            if line_count == 0:  # пропускаем первый ряд
+                line_count += 1
+                el = hobby.readline()
+            else:
+                el = hobby.readline()
+                if str('\r\n') in el and len(el) is 2 or str('\n') in el and len(el) is 1 or \
+                        str('') in el and len(el) is 0:
+                    el = None
+                    users_hobby_txt.writelines(f'{line_users[:len(line_users) - 2]}: {el}\n')
+                else:
+                    if str('\r\n') not in f'{line_users[:len(line_users) - 2]}: {el}':
+                        for_write = f'{line_users[:len(line_users) - 2]}: {el}\r\n'
+                    else:
+                        for_write = f'{line_users[:len(line_users) - 2]}: {el}'
+                    users_hobby_txt.writelines(for_write)
+            line_count += 1
