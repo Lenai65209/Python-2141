@@ -1,0 +1,46 @@
+# Распарсить файл логов в web-сервера nginx_logs.txt - получить список кортежей
+# вида: [(<remote_addr>, <request_type>, <requested_resource>). ]
+# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
+# lenai65209@rambler.ru
+import re
+from time import perf_counter
+
+import requests
+
+
+def get_location_info():
+    """file recording via the query module"""
+    with open('massive-body', 'w+', encoding='utf-8') as f:
+        f.write((requests.get(
+            "https://github.com/elastic/examples/raw/master/Common%20Data%20Formats/nginx_logs/nginx_logs")).text)
+
+
+def get_lst(file_name):
+    """returns a list of tuples of the form: [(<remote_addr>, <request_type>, <requested_resource>, )]"""
+    my_tup_lst = []
+    spam_adr = {}
+    with open(file_name, 'r+', encoding='utf-8') as f:
+        el = f.readline()
+        while el:
+            el = f.readline()
+            el_sp = el.split('- -')
+            el_s = el_sp[0]
+            re_el_s_pop = re.findall(r'\d+\.\d+\.\d+.\d+', f'{el_s}')
+            try:
+                el_s_1 = el_sp[1].split(' ')
+                el_tup = (re_el_s_pop[0], el_s_1[3][1:], el_s_1[4])
+            except:
+                continue
+            my_tup_lst.append(el_tup)
+    return my_tup_lst
+
+
+if __name__ == "__main__":
+    fd = get_location_info()
+    f_name = 'massive-body'
+    start = perf_counter()
+    output_lst = get_lst(f_name)
+    finish = perf_counter()
+    print(output_lst)
+    print(f"Это очень большой список. В нем {len(output_lst)} элементов.")
+    print('Время фрмирования списка: ', finish - start)

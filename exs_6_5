@@ -1,0 +1,49 @@
+# реализован интерфейс командной строки, предусматривающий ввод имени файлов исходных файлов:
+# с данными о пользователях (users.csv),
+# с данными о хобби  (hobby.csv), 
+# а так же выходного файла, где сохраняем объединенные данные (users_hobby.txt)
+# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
+# lenai65209@rambler.ru
+
+
+import csv
+import os
+import os.path
+import sys
+from collections import OrderedDict
+from itertools import islice
+from sys import argv
+
+from exs_6_3 import csv_reader
+
+filename_users_scv = argv[1] # имя файла users
+filename_hobby_scv = argv[2]  # имя файла hobby
+filename_users_hobby_txt = argv[3]  # имя файла users_hobby
+ls_ord_dic_users = csv_reader(filename_users_scv)
+ls_ord_dic_hobby = csv_reader(filename_hobby_scv)
+if len(ls_ord_dic_hobby) > len(ls_ord_dic_users):
+    print("Process finished with exit code 1")
+    sys.exit(1)
+else:
+    with open(filename_users_scv, newline='', encoding='utf-8') as users, open(filename_hobby_scv, newline='',
+                                                                        encoding='utf-8') as hobby, \
+            open(filename_users_hobby_txt, "a", newline='', encoding='utf-8') as users_hobby_txt:
+        line_count = 0
+        for line_users in users:
+            if line_count == 0:  # пропускаем первый ряд
+                line_count += 1
+                el = hobby.readline()
+            else:
+                el = hobby.readline()
+                if str('\r\n') in el and len(el) is 2 or str('\n') in el and len(el) is 1 or \
+                        str('') in el and len(el) is 0:
+                    el = None
+
+                    users_hobby_txt.writelines(f'{line_users[:len(line_users) - 2]}: {el}\r\n')
+                else:
+                    if str('\r\n') not in f'{line_users[:len(line_users) - 2]}: {el}':
+                        for_write = f'{line_users[:len(line_users) - 2]}: {el}\r\n'
+                    else:
+                        for_write = f'{line_users[:len(line_users) - 2]}: {el}'
+                    users_hobby_txt.writelines(for_write)
+            line_count += 1

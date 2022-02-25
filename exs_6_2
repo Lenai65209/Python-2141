@@ -1,0 +1,45 @@
+# Распарсить файл логов в web-сервера nginx_logs.txt 
+# Найти IP адрес спамера и количество отправленных им запросов по данным файла логов.
+# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
+# lenai65209@rambler.ru
+import re
+
+import requests
+
+
+def get_location_info():
+    """file recording via the query module"""
+    with open('massive-body', 'w+', encoding='utf-8') as f:
+        f.write((requests.get(
+            "https://github.com/elastic/examples/raw/master/Common%20Data%20Formats/nginx_logs/nginx_logs")).text)
+
+
+def get_spammer(file_name):
+    """looking for a spammer"""
+    my_tup_lst = []
+    spam_adr = {}
+    with open(file_name, 'r+', encoding='utf-8') as f:
+        el = f.readline()
+        while el:
+            el = f.readline()
+            el_sp = el.split('- -')
+            el_s = el_sp[0]
+            re_el_s_pop = re.findall(r'\d+\.\d+\.\d+.\d+', f'{el_s}')
+            try:
+                if re_el_s_pop[0] in spam_adr.keys():
+                    spam_adr[re_el_s_pop[0]] = spam_adr[re_el_s_pop[0]] + 1
+                else:
+                    spam_adr[re_el_s_pop[0]] = 1
+            except:
+                continue
+    spam_adr_key = max(spam_adr, key=spam_adr.get)
+    return (spam_adr_key, spam_adr[spam_adr_key])
+
+
+if __name__ == "__main__":
+    print("Долго-долго ждем = ) ...")
+    fd = get_location_info()
+    f_name = 'massive-body'
+    get_spammer_adr = get_spammer(f_name)
+    print(f"... Я спамер. Мой IP адрес: {get_spammer_adr[0]}. Я отправил, {get_spammer_adr[1]} запросов ...")
+    print("= ) Это меня Вы так долго ждали = )")
