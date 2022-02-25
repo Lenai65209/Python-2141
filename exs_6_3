@@ -1,0 +1,90 @@
+# Из файла с данными о пользователях (users.csv)
+# и файла с данными о хобби  (hobby.csv)
+# формируем словарь: ключи — ФИО, значения — данные о хобби.
+# Сохраняем словарь в файл my_users_hobby.txt.
+# Проверяем сохранённые данные.
+# 2022 Елена Иконникова, Каргополь, Архангельская область, Россия
+# lenai65209@rambler.ru
+
+import csv
+import json
+import os
+import os.path
+import sys
+from collections import OrderedDict
+from pprint import pprint
+
+
+def csv_reader(csv_file_obj):
+    """
+    Read a csv file
+    """
+    csv_filename_path = os.path.abspath(csv_file_obj)
+    try:  # пытаемся открыть файл и создать список
+        with open(csv_filename_path, "r", newline='', encoding='utf-8') as csv_fd:
+            reader = csv.DictReader(csv_fd, delimiter=',')
+            name_list = []
+            row = None
+            try:  # пытаемся прочесть построчно
+                for line in reader:
+                    if line is None and line == "":
+                        line = None
+                    else:
+                        name_list.append(line)
+            except csv.Error:  # обрабатываем ошибку чтения строки
+                name_list = []
+            except TypeError:
+                name_list = []
+
+    except FileNotFoundError:  # обрабатываем ошибку отсутствия файла
+        name_list = []
+    return name_list
+
+
+if __name__ == "__main__":
+    my_dic = {}
+    dic_users = {}
+    dic_hobby = {}
+    dic_user_hobby = {}
+    i = 0
+    j = 0
+    file_users_csv = "users.csv"
+    file_hobby_csv = "hobby.csv"
+    ls_ord_dic_users = csv_reader(file_users_csv)
+    ls_ord_dic_hobby = csv_reader(file_hobby_csv)
+    if len(ls_ord_dic_hobby) > len(ls_ord_dic_users):
+        sys.exit(1)  # Если в файле с ФИО, меньше записей, чем в файле с хобби /
+        # — выходим из скрипта с кодом «1».
+    while len(ls_ord_dic_hobby) < len(ls_ord_dic_users):
+        my_dic['хобби 1'] = None  # Если в файле c данныvb о хобби, меньше записей, чем в файле с ФИО, /
+        # задаём в словаре значение None.
+        ls_ord_dic_hobby.append(OrderedDict(my_dic))
+    for el in ls_ord_dic_users:
+        str_user = el['Фамилия'] + ',' + el['Имя'] + ',' + el['Отчество']
+        dic_users[i] = str_user
+        i += 1
+    for el in ls_ord_dic_hobby:
+        str_hobby = ''
+        if el['хобби 1'] is None:
+            dic_hobby[j] = None
+        else:
+            for key in el:
+                if el[key] != None:
+                    str_hobby += el[key] + ', '
+                    l = len(str_hobby)
+                    dic_hobby[j] = str_hobby[:l - 2]
+        j += 1
+    for el in dic_users:
+        dic_user_hobby[dic_users[el]] = dic_hobby[el]
+    print('dic_user_hobby до записи в файл: ', dic_user_hobby)
+
+    base_dir = os.path.dirname(__file__)
+    my_users_hobby_path = os.path.join(base_dir, 'my_users_hobby.txt')
+    with open(my_users_hobby_path, 'w') as f:
+        dj = []
+        dj.append(dic_user_hobby)
+        json.dump(dj, f)
+    with open(my_users_hobby_path, "r") as f:
+        data = json.load(f)
+        pprint(data[0])
+        print(type(data[0]))
