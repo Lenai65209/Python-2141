@@ -42,6 +42,7 @@ for key, val in doc_tree.items():
     print(f'Из ключей я соэдал каталог в рабочей директории: {key}')
     print("Вот он:", os.path.abspath(key))
     print(f'В этом каталоге я создал папки:')
+    os.chdir(os.path.abspath(key))
     for el in val:
         print(f' -{el}')
         print("путь к папке:", os.path.abspath(el))
